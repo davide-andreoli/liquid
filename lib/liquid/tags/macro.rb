@@ -54,6 +54,6 @@ class CallMacro < Liquid::Tag
     end
 end
   
-Liquid::Template.register_tag('callmacro', CallMacro)
+Liquid::Template.register_tag('call_macro', CallMacro)
 
 
