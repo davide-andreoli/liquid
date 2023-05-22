@@ -2,11 +2,11 @@
 
 require 'test_helper'
 
-class IfTagUnitTest < Minitest::Test
+class MacroBlockUnitTest < Minitest::Test
   def test_if_nodelist
-    template = Liquid::Template.parse('{% macro hello name age %}Hello World. Your name is {$ name $} and you are {$ age $} years old.{% endmacro %}')
-    template.render
-    template2 = Liquid::Template.parse('{% callmacro hello Davide 5 %}')
-    puts template2.render
+    macro_definition = Liquid::Template.parse('{% macro hello name age %}Hello World. Your name is {$ name $} and you are {$ age $} years old.{% endmacro %}')
+    macro_definition.render
+    macro_call = Liquid::Template.parse('{% callmacro hello Davide 5 %}')
+    assert_equal("Hello World. Your name is Davide and you are 5 years old.", macro_call.render)
   end
 end
