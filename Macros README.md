@@ -5,14 +5,15 @@ I did some research and I discovered that macros were not included in Liquid, an
 
 To be honest, their stance made a lot of sense in their use case, however after a while they decided to include the {% render %} tag, which basically works as a macro would work ([see this pull request if yoou want to read more about it](https://github.com/Shopify/liquid/pull/1122)).
 
-Finally, I should mention that all this work is done with a very limited Ruby knowledge, and with only Looker implementation in mind (which means that I expect to work with SQL code).
+So why develop another macro tag if it's alread available?
 
-## So why develop another macro tag if it's alread available?
-
-Long story short, there are two reasons:
+Long story short, there are four reasons:
 1. I read about the render tag after I alrady began developing my version, so I wanted to finish what I was working on
 2. The render implementation does not allow for default values, which is something I'm interested in looking at
 3. From the Looker IDE there is no way of creating a dedicated .liquid file, so this implementation does not depend on a custom .liquid file, but allows for the creation of inline macros
+4. It is a good Ruby exercise :smile:
+
+Finally, I should mention that all this work is done with a very limited Ruby knowledge, and with only Looker implementation in mind (which basically means that I expect to work with SQL code, although I'll try to keep things general).
 
 # How do they work?
 ## The {% macro %} block
@@ -44,6 +45,7 @@ As for the macro definition, the macro call can be done using parenthesis as wel
 # Limitations
 - Default arguments are not supported
 - Array inputs are not supported
+- Not much flexibility for errors as of right now
 
 # How would this work in Looker
 
