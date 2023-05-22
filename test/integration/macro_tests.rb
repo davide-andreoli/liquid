@@ -3,7 +3,7 @@
 require 'test_helper'
 
 class MacroBlockUnitTest < Minitest::Test
-  def test_if_nodelist
+  def test_macro_assignment_and_call
     macro_definition = Liquid::Template.parse('{% macro hello name age %}Hello World. Your name is {$ name $} and you are {$ age $} years old.{% endmacro %}')
     macro_definition.render
     macro_call = Liquid::Template.parse('{% callmacro hello Davide 5 %}')
