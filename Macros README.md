@@ -24,6 +24,12 @@ The macro arguments should be referenced inside the block using {$ $} tags.
 {% endmacro %}
 ```
 Under the hood when the macro tag is rendered, nothing is printed to the screen but the macro is added to a macro list, which can then be later called with arguments using a dedicated tag.
+Macros can also be defined using parenthesis, meaning that the following code would have the same result as before.
+```liquid
+{% macro hello_world(name) %}
+    Hello World. My name is {$ name $}.
+{% endmacro %}
+```
 ## The {% call_macro %} tag
 Macros defined with the {% macro %} block can be then callend with the {% call_macro %} tag.
 ```liquid
@@ -33,3 +39,6 @@ Would render as:
 ```
 Hello World. My name is Davide.
 ```
+As for the macro definition, the macro call can be done using parenthesis as well (this is obviously not linked to the way the macro has been defined).
+
+
