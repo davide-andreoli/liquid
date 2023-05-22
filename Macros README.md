@@ -41,4 +41,7 @@ Hello World. My name is Davide.
 ```
 As for the macro definition, the macro call can be done using parenthesis as well (this is obviously not linked to the way the macro has been defined).
 
+# Limitations
+- Default arguments are not supported
+- Array inputs are not supported
 
