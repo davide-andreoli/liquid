@@ -45,3 +45,8 @@ As for the macro definition, the macro call can be done using parenthesis as wel
 - Default arguments are not supported
 - Array inputs are not supported
 
+# How would this work in Looker
+
+Macros could be defined at the model level to be used in all views and explores defined in that model.
+
+
