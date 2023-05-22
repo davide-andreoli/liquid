@@ -1,10 +1,3 @@
-# Possible way to implement this
-# When the macro block is called the macro is added in a dictionary as a key value pair where
-# the key is the name of the macro
-# the value is the string of the macro, with the replacement parameters as $0, $1, $2, etc
-# to call the macro one would have to use the callmacro tag, which would then
-# render the correct macro replacing the tokens with regex
-
 class Macros
     @@macros_list = {}
     public
