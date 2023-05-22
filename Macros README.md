@@ -5,7 +5,7 @@ I did some research and I discovered that macros were not included in Liquid, an
 
 To be honest, their stance made a lot of sense in their use case, however after a while they decided to include the {% render %} tag, which basically works as a macro would work ([see this pull request if yoou want to read more about it](https://github.com/Shopify/liquid/pull/1122)).
 
-So why develop another macro tag if it's alread available?
+So why develop another macro tag if something similar to it is already available?
 
 Long story short, there are four reasons:
 1. I read about the render tag after I alrady began developing my version, so I wanted to finish what I was working on
