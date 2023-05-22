@@ -10,15 +10,16 @@ class Macros
     public
     def self.add_macro(macro_name, macro_string)
         @@macros_list[macro_name.to_sym] = macro_string
-        puts "Adding"
-        puts @@macros_list
     end
     def self.macros_list
         @@macros_list
     end
-    def self.read_macro(macro_name)
-        puts "Reading"
-        puts @@macros_list[macro_name.to_sym]
+    def self.read_macro(macro_name, macro_arguments)
+        macro_string = @@macros_list[macro_name.to_sym]
+        for index in 0..macro_arguments.count - 1
+            macro_string = macro_string.gsub(/\{\$\s+\$#{index}\s+\$\}/, macro_arguments[index])
+        end
+        macro_string
     end
 
 end
@@ -27,13 +28,17 @@ end
 class Macro < Liquid::Block
     def initialize(tag_name, markup, tokens)
        super
-       @macro_name = markup.to_s.split(" ")[0].to_sym
-       puts tag_name
-       puts markup
+       @macro_tokens = markup.gsub(/[,)()]/, ' ').gsub(/\s+/, ' ').split(' ')
+       @macro_name = @macro_tokens.shift.to_sym
+       @macro_arguments = @macro_tokens
     end
 
     def render(context)
       @macro_string = super
+      for index in 0..@macro_arguments.count - 1
+        replacement = '{$ $' + index.to_s + ' $}'
+        @macro_string = @macro_string.gsub(/\{\$\s+#{@macro_arguments[index]}\s+\$\}/, replacement)    
+      end
       Macros.add_macro(@macro_name, @macro_string)
     end
 end
@@ -43,11 +48,13 @@ Liquid::Template.register_tag('macro', Macro)
 class CallMacro < Liquid::Tag
     def initialize(tag_name, markup, tokens)
        super
-       @macro_name = markup.to_sym
+       @macro_tokens = markup.gsub(/[,)()]/, ' ').gsub(/\s+/, ' ').split(' ')
+       @macro_name = @macro_tokens.shift.to_sym
+       @macro_arguments = @macro_tokens
     end
   
     def render(context)
-        puts Macros.read_macro("hello")
+        Macros.read_macro(@macro_name, @macro_arguments)
     end
   end
   
