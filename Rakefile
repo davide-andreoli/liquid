@@ -6,11 +6,13 @@ $LOAD_PATH.unshift(File.expand_path("../lib", __FILE__))
 require "liquid/version"
 
 task(default: [:test, :rubocop])
+#task(default: [:test])
 
 desc('run test suite with default parser')
 Rake::TestTask.new(:base_test) do |t|
   t.libs << 'lib' << 'test'
   t.test_files = FileList['test/{integration,unit}/**/*_test.rb']
+  #t.test_files = FileList['test/unit/tags/call_macro_tag_unit_test.rb', 'test/integration/macro_tests.rb']
   t.verbose    = false
 end
 
