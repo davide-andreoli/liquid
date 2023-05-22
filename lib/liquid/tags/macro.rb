@@ -44,8 +44,11 @@ Liquid::Template.register_tag('macro', Macro)
 class CallMacro < Liquid::Tag
     def initialize(tag_name, markup, tokens)
        super
-       @macro_tokens = markup.gsub(/[,()]/, ' ').gsub(/\s+/, ' ').split(' ')
+       @macro_tokens = markup.gsub(/[,()]/, ' ').gsub(/\s+/, ' ').scan(/[^\s"']+|"[^"]*"/)
        @macro_name = @macro_tokens.shift.to_sym
+       for index in 0..@macro_tokens.count - 1
+            @macro_tokens[index] = @macro_tokens[index].delete_prefix('"').delete_suffix('"')
+       end
        @macro_arguments = @macro_tokens
     end
   
