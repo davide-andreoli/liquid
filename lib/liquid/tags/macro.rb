@@ -147,4 +147,5 @@ end
   
 Liquid::Template.register_tag('call_macro', CallMacro)
 
-
+# ruby -I test test/integration/macro_tests.rb
+# ruby -I test test/unit/tags/call_macro_tag_unit_test.rb
