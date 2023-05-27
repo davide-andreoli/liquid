@@ -74,6 +74,7 @@ class MacroParser
                 end
             end
         end
+        self.next
         token
     end
 
