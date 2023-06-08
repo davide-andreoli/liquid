@@ -8,3 +8,4 @@ pkg
 Gemfile.lock
 .bundle
 .byebug_history
+.vscode
