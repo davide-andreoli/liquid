@@ -1,15 +1,25 @@
+"""
+To parse named arguments:
+- write a function to peek a token, and check if it contains an assignment operator
+- write a function to parse the assignment: everything before the equal sign is the name of the variable, everything after the value
+- refactor the macro list to be contain an arguments object, which have a key conisting of the name of the variable and a default value as a value, or nil if no default value is givven
+
+"""
+
+
 class Macros
     @@macros_list = {}
     public
     def self.add_macro(macro_name, macro_string)
-        @@macros_list[macro_name.to_sym] = macro_string
+        @@macros_list[macro_name.to_sym] = {}
+        @@macros_list[macro_name.to_sym][:body] = macro_string
     end
     def self.macros_list
         @@macros_list
     end
     def self.read_macro(macro_name, macro_arguments)
         if @@macros_list.key?(macro_name)
-            macro_string = @@macros_list[macro_name.to_sym]
+            macro_string = @@macros_list[macro_name.to_sym][:body]
             for index in 0..macro_arguments.count - 1
                 macro_string = macro_string.gsub(/\{\$\s+\$#{index}\s+\$\}/, macro_arguments[index])
             end
