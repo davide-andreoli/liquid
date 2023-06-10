@@ -2,17 +2,16 @@
 To parse named arguments:
 - write a function to peek a token, and check if it contains an assignment operator
 - write a function to parse the assignment: everything before the equal sign is the name of the variable, everything after the value
-- refactor the macro list to be contain an arguments object, which have a key conisting of the name of the variable and a default value as a value, or nil if no default value is givven
-
 """
 
 
 class Macros
     @@macros_list = {}
     public
-    def self.add_macro(macro_name, macro_string)
+    def self.add_macro(macro_name, macro_arguments, macro_string)
         @@macros_list[macro_name.to_sym] = {}
         @@macros_list[macro_name.to_sym][:body] = macro_string
+        @@macros_list[macro_name.to_sym][:arguments] = macro_arguments
     end
     def self.macros_list
         @@macros_list
@@ -104,7 +103,67 @@ class MacroParser
         token
     end
 
-    def parse
+    def peek_token(skip_spaces = true)
+        current_reading_position = @reading_position
+        token = ""
+        while ! self.end_of_file do
+            if self.is_alphanumeric == true
+                token = token + self.next
+            elsif self.is_whitespace && skip_spaces == true
+                break
+            elsif self.is_whitespace && skip_spaces == false
+                token = token + self.next
+            else
+                break
+            end
+        end
+        @reading_position = current_reading_position
+        token
+    end
+
+    def is_assignment_token
+        self.peek_token.include? "="
+    end
+
+    def read_assignment
+        variable_name = ""
+        variable_value = ""
+        while ! self.end_of_file do
+            if self.is_alphanumeric == true
+                variable_name = variable_name + self.next
+            elsif self.is_whitespace
+                self.next
+            elsif self.is_assignment
+                break
+            else
+                break
+            end
+        end
+        if self.is_alphanumeric == true
+            variable_value = self.read_token
+        elsif self.is_quotes == true
+            variable_value = self.read_string
+        end
+        array = [variable_name, variable_value]
+        array
+    end
+
+    def parse_macro_creation
+        list = {}
+        while ! self.end_of_file do
+            if self.is_assignment_token == true
+                token = self.read_assignment
+                list[token[0].to_sym] = token[1]
+            elsif self.is_alphanumeric == true
+                list[self.read_token.to_sym] = nil
+            else
+                self.next
+            end
+        end
+        list
+    end
+
+    def parse_macro_call
         list = []
         while ! self.end_of_file do
             if self.is_alphanumeric == true
@@ -122,8 +181,8 @@ end
 class Macro < Liquid::Block
     def initialize(tag_name, markup, tokens)
        super
-       @macro_tokens = MacroParser.new(markup).parse
-       @macro_name = @macro_tokens.shift.to_sym
+       @macro_tokens = MacroParser.new(markup).parse_macro_creation
+       @macro_name = @macro_tokens.shift[0].to_sym
        @macro_arguments = @macro_tokens
     end
 
@@ -131,9 +190,9 @@ class Macro < Liquid::Block
       @macro_string = super
       for index in 0..@macro_arguments.count - 1
         replacement = '{$ $' + index.to_s + ' $}'
-        @macro_string = @macro_string.gsub(/\{\$\s+#{@macro_arguments[index]}\s+\$\}/, replacement)    
+        @macro_string = @macro_string.gsub(/\{\$\s+#{@macro_arguments.keys[index].to_s}\s+\$\}/, replacement)    
       end
-      Macros.add_macro(@macro_name, @macro_string)
+      Macros.add_macro(@macro_name, @macro_arguments, @macro_string)
     end
 end
   
@@ -142,7 +201,7 @@ Liquid::Template.register_tag('macro', Macro)
 class CallMacro < Liquid::Tag
     def initialize(tag_name, markup, tokens)
        super
-       @macro_tokens = MacroParser.new(markup).parse
+       @macro_tokens = MacroParser.new(markup).parse_macro_call
        @macro_name = @macro_tokens.shift.to_sym
        for index in 0..@macro_tokens.count - 1
             @macro_tokens[index] = @macro_tokens[index].delete_prefix('"').delete_suffix('"')
