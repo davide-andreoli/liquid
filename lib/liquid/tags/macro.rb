@@ -31,7 +31,7 @@ end
 
 class MacroParser
     def initialize(string_to_parse)
-        @string_to_parse = string_to_parse.chars
+        @string_to_parse = string_to_parse.rstrip.lstrip.chars
         @reading_position = 0
     end
 
@@ -103,26 +103,23 @@ class MacroParser
         token
     end
 
-    def peek_token(skip_spaces = true)
+    def is_assignment_token
         current_reading_position = @reading_position
-        token = ""
+        result = false
         while ! self.end_of_file do
             if self.is_alphanumeric == true
-                token = token + self.next
-            elsif self.is_whitespace && skip_spaces == true
-                break
-            elsif self.is_whitespace && skip_spaces == false
-                token = token + self.next
+                self.next
+            elsif self.is_whitespace == true
+                self.next
             else
                 break
             end
         end
+        if ! self.end_of_file && self.is_assignment
+            result = true
+        end
         @reading_position = current_reading_position
-        token
-    end
-
-    def is_assignment_token
-        self.peek_token.include? "="
+        result
     end
 
     def read_assignment
@@ -139,7 +136,10 @@ class MacroParser
                 break
             end
         end
-        if self.is_alphanumeric == true
+        self.next # skip the equal sign
+        if self.is_whitespace == true
+            self.next
+        elsif is_alphanumeric == true
             variable_value = self.read_token
         elsif self.is_quotes == true
             variable_value = self.read_string
