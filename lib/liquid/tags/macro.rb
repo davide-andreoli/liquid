@@ -22,6 +22,11 @@ class Macros
             for index in 0..macro_arguments.count - 1
                 macro_string = macro_string.gsub(/\{\$\s+\$#{index}\s+\$\}/, macro_arguments.values[index])
             end
+            if macro_arguments.count != @@macros_list[macro_name.to_sym][:arguments].count
+                for index in macro_arguments.count..@@macros_list[macro_name.to_sym][:arguments].count - 1
+                    macro_string = macro_string.gsub(/\{\$\s+\$#{index}\s+\$\}/, @@macros_list[macro_name.to_sym][:arguments].values[index])
+                end
+            end
             macro_string
         else
             raise Liquid::MacroNotDefinedError
