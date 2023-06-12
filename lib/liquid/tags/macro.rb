@@ -155,12 +155,18 @@ class MacroParser
 
     def parse_macro_creation
         list = {}
+        read_assignment = false
         while ! self.end_of_file do
             if self.is_assignment_token == true
                 token = self.read_assignment
                 list[token[0].to_sym] = token[1]
+                read_assignment = true
             elsif self.is_alphanumeric == true
-                list[self.read_token.to_sym] = nil
+                if read_assignment
+                    raise Liquid::MacroDefaultsShouldGoLastError
+                else
+                    list[self.read_token.to_sym] = nil
+                end
             else
                 self.next
             end

@@ -40,4 +40,9 @@ class MacroBlockUnitTest < Minitest::Test
     assert_equal("Hello World. Your name is Davide and you are 18 years old.", macro_call.render)
   end
 
+  def test_macro_assignment_with_default_argument_2
+    exception = assert_raises(Liquid::MacroDefaultsShouldGoLastError) {Liquid::Template.parse('{% macro hello(name="Davide", age) %}Hello World. Your name is {$ name $} and you are {$ age $} years old.{% endmacro %}')}
+    assert_equal(Liquid::MacroDefaultsShouldGoLastError, exception.class)
+  end
+
 end

@@ -56,4 +56,5 @@ module Liquid
   DisabledError       = Class.new(Error)
   InternalError       = Class.new(Error)
   MacroNotDefinedError = Class.new(Error)
+  MacroDefaultsShouldGoLastError = Class.new(Error)
 end
