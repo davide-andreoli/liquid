@@ -20,7 +20,7 @@ class Macros
         if @@macros_list.key?(macro_name)
             macro_string = @@macros_list[macro_name.to_sym][:body]
             for index in 0..macro_arguments.count - 1
-                macro_string = macro_string.gsub(/\{\$\s+\$#{index}\s+\$\}/, macro_arguments[index])
+                macro_string = macro_string.gsub(/\{\$\s+\$#{index}\s+\$\}/, macro_arguments.values[index])
             end
             macro_string
         else
@@ -164,17 +164,26 @@ class MacroParser
     end
 
     def parse_macro_call
-        list = []
+        list = {}
+        macro_name = ""
+        read_macro_name = false
         while ! self.end_of_file do
             if self.is_alphanumeric == true
-                list.append(self.read_token)
+                if ! read_macro_name
+                    macro_name = self.read_token
+                    read_macro_name = true
+                else
+                    list[("$" + (list.keys.count).to_s).to_sym] = self.read_token
+                end
+                
             elsif self.is_quotes == true
-                list.append(self.read_string)
+                list[("$" + (list.keys.count).to_s).to_sym] = self.read_string
             else
                 self.next
             end
         end
-        list
+        array = [macro_name, list]
+        array
     end
 end
   
@@ -201,10 +210,10 @@ Liquid::Template.register_tag('macro', Macro)
 class CallMacro < Liquid::Tag
     def initialize(tag_name, markup, tokens)
        super
-       @macro_tokens = MacroParser.new(markup).parse_macro_call
-       @macro_name = @macro_tokens.shift.to_sym
+       @macro_tokens = MacroParser.new(markup).parse_macro_call[1]
+       @macro_name = MacroParser.new(markup).parse_macro_call[0].to_sym
        for index in 0..@macro_tokens.count - 1
-            @macro_tokens[index] = @macro_tokens[index].delete_prefix('"').delete_suffix('"')
+            @macro_tokens.keys[index] = @macro_tokens.keys[index].to_s.delete_prefix('"').delete_suffix('"')
        end
        @macro_arguments = @macro_tokens
     end
