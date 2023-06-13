@@ -1,10 +1,7 @@
 """
-To parse named arguments:
-- write a function to peek a token, and check if it contains an assignment operator
-- write a function to parse the assignment: everything before the equal sign is the name of the variable, everything after the value
+    To-Do:
+        - parse named arguments when calling a macro
 """
-
-
 class Macros
     @@macros_list = {}
     public
