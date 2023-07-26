@@ -107,11 +107,13 @@ class MacroParser
 
     def is_assignment_token
         current_reading_position = @reading_position
+        parsed_space = false
         result = false
         while ! self.end_of_file do
-            if self.is_alphanumeric == true
+            if self.is_alphanumeric == true && parsed_space == false
                 self.next
             elsif self.is_whitespace == true
+                parsed_space = true
                 self.next
             else
                 break
@@ -175,8 +177,13 @@ class MacroParser
         list = {}
         macro_name = ""
         read_macro_name = false
+        read_assignment = false
         while ! self.end_of_file do
-            if self.is_alphanumeric == true
+            if self.is_assignment_token == true
+                token = self.read_assignment
+                list[token[0].to_sym] = token[1]
+                read_assignment = true
+            elsif self.is_alphanumeric == true
                 if ! read_macro_name
                     macro_name = self.read_token
                     read_macro_name = true

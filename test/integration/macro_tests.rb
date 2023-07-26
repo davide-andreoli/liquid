@@ -40,4 +40,11 @@ class MacroBlockUnitTest < Minitest::Test
     assert_equal("Hello World. Your name is Davide and you are 18 years old.", macro_call.render)
   end
 
+  def test_macro_assignment_and_call_with_overwritten_default_argument
+    macro_definition = Liquid::Template.parse('{% macro hello(name, age=18) %}Hello World. Your name is {$ name $} and you are {$ age $} years old.{% endmacro %}')
+    macro_definition.render
+    macro_call = Liquid::Template.parse('{% call_macro hello Davide age=5 %}')
+    assert_equal("Hello World. Your name is Davide and you are 5 years old.", macro_call.render)
+  end
+
 end
