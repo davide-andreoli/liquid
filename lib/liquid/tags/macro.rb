@@ -17,7 +17,11 @@ class Macros
         if @@macros_list.key?(macro_name)
             macro_string = @@macros_list[macro_name.to_sym][:body]
             for index in 0..macro_arguments.count - 1
-                macro_string = macro_string.gsub(/\{\$\s+\$#{index}\s+\$\}/, macro_arguments.values[index])
+                if macro_arguments.keys[index].match?(/\$[0-9]*/)
+                    macro_string = macro_string.gsub(/\{\$\s+\$#{index}\s+\$\}/, macro_arguments.values[index])
+                else
+                    macro_string = macro_string.gsub(/\{\$\s+\$#{@@macros_list[macro_name.to_sym][:arguments].keys.index(macro_arguments.keys[index])}\s+\$\}/, macro_arguments.values[index])
+                end
             end
             if macro_arguments.count != @@macros_list[macro_name.to_sym][:arguments].count
                 for index in macro_arguments.count..@@macros_list[macro_name.to_sym][:arguments].count - 1
