@@ -245,17 +245,24 @@ class MacroParser
     end
 
     def parse_macro_creation
+        """
+            This function is used to parse the macro creations syntax.
+            It return a hash of arguments in the form :argument_name -> argument value.
+        """
         list = {}
         read_assignment = false
         while ! self.end_of_file do
+            # Check if the token is an assignment token, which means an argument with a default value
             if self.is_assignment_token == true
                 token = self.read_assignment
                 list[token[0].to_sym] = token[1]
                 read_assignment = true
             elsif self.is_alphanumeric == true
+                # Checks if an assignment is already been read, becasue default arguments should go last
                 if read_assignment
                     raise Liquid::MacroDefaultsShouldGoLastError
                 else
+                    # Add
                     list[self.read_token.to_sym] = nil
                 end
             else
@@ -266,6 +273,10 @@ class MacroParser
     end
 
     def parse_macro_call
+        """
+            This function is used to parse the macro call syntax.
+            It returns an array containing the macro name and a hash of arguments in the form :argument_name -> argument value.
+        """
         list = {}
         macro_name = ""
         read_macro_name = false
