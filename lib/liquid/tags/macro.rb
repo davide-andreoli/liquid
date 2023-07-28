@@ -282,19 +282,23 @@ class MacroParser
         read_macro_name = false
         read_assignment = false
         while ! self.end_of_file do
+            # Checks to see if the token is an assingment token
             if self.is_assignment_token == true
                 token = self.read_assignment
                 list[token[0].to_sym] = token[1]
                 read_assignment = true
             elsif self.is_alphanumeric == true
+                # Checks if macro name has already been parsed, if not parse it
                 if ! read_macro_name
                     macro_name = self.read_token
                     read_macro_name = true
                 else
+                    # Parse the positional argument in the form :$n -> value
                     list[("$" + (list.keys.count).to_s).to_sym] = self.read_token
                 end
                 
             elsif self.is_quotes == true
+                # Parse the positional argument in the form :$n -> value
                 list[("$" + (list.keys.count).to_s).to_sym] = self.read_string
             else
                 self.next
@@ -306,7 +310,13 @@ class MacroParser
 end
   
 class Macro < Liquid::Block
+    """
+        The Macro TAG.
+    """
     def initialize(tag_name, markup, tokens)
+        """
+            The initialize uses the Macro parser to receive a list of tokens, the first of which is the macro name, the rest the arguments.
+        """
        super
        @macro_tokens = MacroParser.new(markup).parse_macro_creation
        @macro_name = @macro_tokens.shift[0].to_sym
@@ -314,12 +324,15 @@ class Macro < Liquid::Block
     end
 
     def render(context)
-      @macro_string = super
-      for index in 0..@macro_arguments.count - 1
-        replacement = '{$ $' + index.to_s + ' $}'
-        @macro_string = @macro_string.gsub(/\{\$\s+#{@macro_arguments.keys[index].to_s}\s+\$\}/, replacement)    
-      end
-      Macros.add_macro(@macro_name, @macro_arguments, @macro_string)
+    """
+        In the render function there is not actual rendering, but the macro is added to the Macros list variable.
+    """
+        @macro_string = super
+        for index in 0..@macro_arguments.count - 1
+            replacement = '{$ $' + index.to_s + ' $}'
+            @macro_string = @macro_string.gsub(/\{\$\s+#{@macro_arguments.keys[index].to_s}\s+\$\}/, replacement)    
+        end
+        Macros.add_macro(@macro_name, @macro_arguments, @macro_string)
     end
 end
   
@@ -327,9 +340,14 @@ Liquid::Template.register_tag('macro', Macro)
 
 class CallMacro < Liquid::Tag
     def initialize(tag_name, markup, tokens)
+        """
+        The initialize uses the Macro parser to receive a list of tokens, the first of which is the macro name, the rest the arguments.
+        """
        super
+       # TO-DO parse_macro_call called two times --> change to one
        @macro_tokens = MacroParser.new(markup).parse_macro_call[1]
        @macro_name = MacroParser.new(markup).parse_macro_call[0].to_sym
+       # Strip quotes
        for index in 0..@macro_tokens.count - 1
             @macro_tokens.keys[index] = @macro_tokens.keys[index].to_s.delete_prefix('"').delete_suffix('"')
        end
