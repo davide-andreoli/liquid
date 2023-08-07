@@ -7,9 +7,10 @@ class CallMacro < Liquid::Tag
         The initialize uses the Macro parser to receive a list of tokens, the first of which is the macro name, the rest the arguments.
         """
        super
-       # TO-DO parse_macro_call called two times --> change to one
-       @macro_tokens = Liquid::MacroParser.new(markup).parse_macro_call[1]
-       @macro_name = Liquid::MacroParser.new(markup).parse_macro_call[0].to_sym
+       @macro_tokens = Liquid::MacroParser.new(markup).parse_macro_call
+       @macro_name = @macro_tokens.shift.to_sym
+       @macro_tokens = @macro_tokens[0]
+       print(@macro_name)
        # Strip quotes
        for index in 0..@macro_tokens.count - 1
             @macro_tokens.keys[index] = @macro_tokens.keys[index].to_s.delete_prefix('"').delete_suffix('"')
