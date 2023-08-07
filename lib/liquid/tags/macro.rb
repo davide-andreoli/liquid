@@ -1,7 +1,3 @@
-"""
-    To-Do:
-        - parse named arguments when calling a macro
-"""
 class Macros
     """
         This class is used to store user defined macros.
