@@ -147,23 +147,16 @@ module Liquid
             variable_name = ""
             variable_value = ""
             # read the variable name
-            # TO-DO: use function read token
-            while ! self.end_of_file do
-                if self.is_alphanumeric == true
-                    variable_name = variable_name + self.next
-                elsif self.is_whitespace
+            variable_name = self.read_token
+            self.next # skip the equal sign
+            while true
+                if self.is_whitespace == true
                     self.next
-                elsif self.is_assignment
-                    break
                 else
                     break
                 end
             end
-            self.next # skip the equal sign
-            # TO-DO use a for loop, this will skip only one space
-            if self.is_whitespace == true
-                self.next
-            elsif is_alphanumeric == true
+            if is_alphanumeric == true
                 variable_value = self.read_token
             elsif self.is_quotes == true
                 variable_value = self.read_string
