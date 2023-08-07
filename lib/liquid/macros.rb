@@ -42,7 +42,7 @@ module Liquid
                 # Reads the macro string from the macros list
                 macro_string = @@macros_list[macro_name.to_sym][:body]
                 # Iterate over the arguments in the macro call
-                for macro_argument in 0..macro_arguments.count - 1
+                for index in 0..macro_arguments.count - 1
                     # Check if the argument is a positional one
                     if macro_arguments.keys[index].match?(/\$[0-9]*/)
                         # Replaces all the $x occurences inside the macro string with the corresponding value
