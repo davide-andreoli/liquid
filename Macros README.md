@@ -31,6 +31,13 @@ Macros can also be defined using parenthesis, meaning that the following code wo
     Hello World. My name is {$ name $}.
 {% endmacro %}
 ```
+When defining a macro, default argument values can be assigned with a simple assignment operation.
+Arguments with default values should always appear last in the argument list, if not an error is raised.
+```liquid
+{% macro hello_world name="Davide" %}
+    Hello World. My name is {$ name $}.
+{% endmacro %}
+```
 ## The {% call_macro %} tag
 Macros defined with the {% macro %} block can be then callend with the {% call_macro %} tag.
 ```liquid
@@ -41,11 +48,11 @@ Would render as:
 Hello World. My name is Davide.
 ```
 As for the macro definition, the macro call can be done using parenthesis as well (this is obviously not linked to the way the macro has been defined).
+If a macro has some arguments with default values, they can be omitted and the default value will be used in the macro rendering.
 
-# Limitations
-- Default arguments are not supported
-- Array inputs are not supported
-- Not much flexibility for errors as of right now
+# Possible improvements
+- Support array inputs and iterations in the macro definition
+- Improve error handling and make the code more robust in general
 
 # How would this work in Looker
 
